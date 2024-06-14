@@ -10,7 +10,7 @@
 using namespace std;
 
 // NOTE: username and password must have no spaces between.
-// ^^ I cannot get getline() to work in this program and cin cannot read spaes
+// ^^ I cannot get getline() to work in this program and cin cannot read spaces
 
 class User {
     private:
