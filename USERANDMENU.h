@@ -11,9 +11,6 @@
 
 using namespace std;
 
-// NOTE: username and password must have no spaces between.
-// ^^ I cannot get getline() to work in this program and cin cannot read spaces
-
 class User
 {
 private:
@@ -76,7 +73,6 @@ public:
         cout << "Enter password: ";
         cin >> pass;
 
-        // Iterate through the vector.
         for (auto &u : users)
         {
             if (u.getName() == user && u.getPass() == pass)
@@ -138,9 +134,9 @@ public:
         while (true)
         {
             cout << "1. Add a new car\n2. Modify car data\n3. Display all cars\n4. Sort cars by brand\n5. Sort cars by price\n"
-                 << "6. Search for a car by its ID\n7. Track the number of cars sold\n8. Remove a car record\n"
-                 << "9. Sort cars by best-selling brand and search for the best-selling brand\n10. Generate a bill for a purchase\n11. Search for issued bills\n"
-                 << "12. Generate a report of all company purchases\n13. Exit\nEnter your choice: ";
+                 << "6. Search for a car by its ID\n7. Track the number of cars sold\n8. Purchase a car (remove from list and generate bill)\n"
+                 << "9. Sort cars by best-selling brand and search for the best-selling brand\n10. Search for issued bills\n"
+                 << "11. Generate a report of all company purchases\n12. Exit\nEnter your choice: ";
             cin >> choice;
 
             switch (choice)
@@ -167,22 +163,19 @@ public:
                 trackSales();
                 break;
             case 8:
-                removeCar();
+                purchaseCar();
                 break;
             case 9:
                 sortCarsByBestSellingBrand();
                 searchBestSellingCarByBrand();
                 break;
             case 10:
-                generateBill();
-                break;
-            case 11:
                 searchIssuedBills();
                 break;
-            case 12:
+            case 11:
                 generatePurchaseReport();
                 break;
-            case 13:
+            case 12:
                 return;
             default:
                 cout << "Invalid choice. Please try again." << endl;
