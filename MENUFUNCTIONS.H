@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <string>
+#include <functional>
 
 using namespace std;
 
@@ -91,18 +92,109 @@ void displayAllCars()
     }
 }
 
-void sortCarsByBrand()
+void quickSort(vector<Car> &arr, int low, int high, function<bool(const Car &, const Car &)> comparator)
 {
-    sort(cars.begin(), cars.end(), [](const Car &a, const Car &b)
-         { return a.brand < b.brand; });
+    if (low < high)
+    {
+        int pi = partition(arr, low, high, comparator);
+        quickSort(arr, low, pi - 1, comparator);
+        quickSort(arr, pi + 1, high, comparator);
+    }
+}
+
+int partition(vector<Car> &arr, int low, int high, function<bool(const Car &, const Car &)> comparator)
+{
+    Car pivot = arr[high];
+    int i = (low - 1);
+    for (int j = low; j <= high - 1; j++)
+    {
+        if (comparator(arr[j], pivot))
+        {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return (i + 1);
+}
+
+void sortCarsByID()
+{
+    quickSort(cars, 0, cars.size() - 1, [](const Car &a, const Car &b)
+              { return a.id < b.id; });
     displayAllCars();
 }
 
 void sortCarsByPrice()
 {
-    sort(cars.begin(), cars.end(), [](const Car &a, const Car &b)
-         { return a.price < b.price; });
+    quickSort(cars, 0, cars.size() - 1, [](const Car &a, const Car &b)
+              { return a.price < b.price; });
     displayAllCars();
+}
+
+void sortCarsByBrand()
+{
+    quickSort(cars, 0, cars.size() - 1, [](const Car &a, const Car &b)
+              { return a.brand < b.brand; });
+    displayAllCars();
+}
+
+void selectionSort(vector<Car> &arr, function<bool(const Car &, const Car &)> comparator)
+{
+    int n = arr.size();
+    for (int i = 0; i < n - 1; i++)
+    {
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++)
+        {
+            if (comparator(arr[j], arr[minIndex]))
+            {
+                minIndex = j;
+            }
+        }
+        swap(arr[minIndex], arr[i]);
+    }
+}
+
+void sortCarsByBestSellingBrand()
+{
+    selectionSort(cars, [](const Car &a, const Car &b)
+                  { return a.brand < b.brand; });
+    displayAllCars();
+}
+
+int binarySearch(const vector<Car> &arr, const string &brand)
+{
+    int left = 0, right = arr.size() - 1;
+    while (left <= right)
+    {
+        int mid = left + (right - left) / 2;
+        if (arr[mid].brand == brand)
+            return mid;
+        if (arr[mid].brand < brand)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+    return -1;
+}
+
+void searchBestSellingCarByBrand()
+{
+    string brand;
+    cout << "Enter car brand to search: ";
+    cin >> brand;
+    int index = binarySearch(cars, brand);
+    if (index != -1)
+    {
+        cout << "Best-selling car found: " << endl;
+        cout << "ID: " << cars[index].id << ", Brand: " << cars[index].brand << ", Color: " << cars[index].color
+             << ", Country: " << cars[index].country << ", Year: " << cars[index].year << ", Price: " << cars[index].price << endl;
+    }
+    else
+    {
+        cout << "Best-selling car with brand " << brand << " not found." << endl;
+    }
 }
 
 void searchCarByID()
@@ -151,11 +243,4 @@ void removeCar()
     cout << "Car with ID " << id << " not found." << endl;
 }
 
-void sortCarsByBestSellingBrand()
-{
-    sort(cars.begin(), cars.end(), [](const Car &a, const Car &b)
-         { return a.sold > b.sold; });
-    displayAllCars();
-}
-
-#endif
+#endif // MENUFUNCTIONS_H_INCLUDED
