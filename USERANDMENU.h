@@ -133,10 +133,10 @@ public:
         int choice;
         while (true)
         {
-            cout << "1. Add a new car\n2. Modify car data\n3. Display all cars\n4. Sort cars by brand\n5. Sort cars by price\n"
-                 << "6. Search for a car by its ID\n7. Track the number of cars sold\n8. Purchase a car (remove from list and generate bill)\n"
-                 << "9. Sort cars by best-selling brand and search for the best-selling brand\n10. Search for issued bills\n"
-                 << "11. Generate a report of all company purchases\n12. Exit\nEnter your choice: ";
+            cout << "1. Add a new car\n2. Modify car data\n3. Display all cars\n4. Sort cars by ID\n5. Sort cars by brand\n6. Sort cars by price\n"
+                 << "7. Search for a car by its ID\n8. Track the number of cars sold\n9. Purchase a car (remove from list and generate bill)\n"
+                 << "10. Sort cars by best-selling brand and search for the best-selling brand\n11. Search for issued bills\n"
+                 << "12. Generate a report of all company purchases\n13. Exit\nEnter your choice: ";
             cin >> choice;
 
             switch (choice)
@@ -151,31 +151,34 @@ public:
                 displayAllCars();
                 break;
             case 4:
-                sortCarsByBrand();
+                sortCarsByID();
                 break;
             case 5:
-                sortCarsByPrice();
+                sortCarsByBrand();
                 break;
             case 6:
-                searchCarByID();
+                sortCarsByPrice();
                 break;
             case 7:
-                trackSales();
+                searchCarByID();
                 break;
             case 8:
-                purchaseCar();
+                trackSales();
                 break;
             case 9:
+                purchaseCar();
+                break;
+            case 10:
                 sortCarsByBestSellingBrand();
                 searchBestSellingCarByBrand();
                 break;
-            case 10:
+            case 11:
                 searchIssuedBills();
                 break;
-            case 11:
+            case 12:
                 generatePurchaseReport();
                 break;
-            case 12:
+            case 13:
                 return;
             default:
                 cout << "Invalid choice. Please try again." << endl;
