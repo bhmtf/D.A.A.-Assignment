@@ -2,6 +2,7 @@
 #define MENUFUNCTIONS_H_INCLUDED
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <algorithm>
 #include <ctime>
@@ -87,12 +88,25 @@ void modifyCar()
 
 void displayAllCars()
 {
+    cout << left << setw(10) << "Car ID"
+         << left << setw(15) << "Car Brand"
+         << left << setw(6) << "Year"
+         << left << setw(10) << "Color"
+         << left << setw(10) << "Price"
+         << left << setw(10) << "Country" << endl;
+    cout << "-------------------------------------------------------------" << endl;
     for (const auto &car : cars)
     {
-        cout << "ID: " << car.id << ", Brand: " << car.brand << ", Color: " << car.color
-             << ", Country: " << car.country << ", Year: " << car.year << ", Price(In RM): " << car.price << endl;
+        cout << left << setw(10) << car.id
+             << left << setw(15) << car.brand
+             << left << setw(6) << car.year
+             << left << setw(10) << car.color
+             << left << setw(10) << car.price
+             << left << setw(10) << car.country << endl;
     }
 }
+
+
 
 int customPartition(vector<Car> &arr, int low, int high, function<bool(const Car &, const Car &)> comparator)
 {

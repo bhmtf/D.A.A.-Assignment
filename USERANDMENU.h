@@ -133,10 +133,23 @@ public:
         int choice;
         while (true)
         {
-            cout << "1. Add a new car\n2. Modify car data\n3. Display all cars\n4. Sort cars by ID\n5. Sort cars by brand\n6. Sort cars by price\n"
-                 << "7. Search for a car by its ID\n8. Track the number of cars sold\n9. Purchase a car (remove from list and generate bill)\n"
-                 << "10. Sort cars by best-selling brand and search for the best-selling brand\n11. Search for issued bills\n"
-                 << "12. Generate a report of all company purchases\n13. Exit\nEnter your choice: ";
+            cout << "----------------------------------------" << endl;
+            cout << "Car Management Menu" << endl;
+            cout << "----------------------------------------" << endl;
+            cout << "1. Add a new car" << endl;
+            cout << "2. Modify car data" << endl;
+            cout << "3. Display all cars" << endl;
+            cout << "4. Sort cars by ID" << endl;
+            cout << "5. Sort cars by brand" << endl;
+            cout << "6. Sort cars by price" << endl;
+            cout << "7. Search for a car by its ID" << endl;
+            cout << "8. Track the number of cars sold" << endl;
+            cout << "9. Purchase a car (remove from list and generate bill)" << endl;
+            cout << "10. Sort cars by best-selling brand and search for the best-selling brand" << endl;
+            cout << "11. Search for issued bills" << endl;
+            cout << "12. Generate a report of all company purchases" << endl;
+            cout << "13. Exit" << endl;
+            cout << "Enter your choice: ";
             cin >> choice;
 
             switch (choice)
