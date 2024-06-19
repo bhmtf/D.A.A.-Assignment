@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <algorithm>
+#include <limits>
 
 using namespace std;
 
@@ -50,7 +51,13 @@ void searchIssuedBills()
     string searchValue;
 
     cout << "Search by: 1. Customer ID 2. Bill Date" << endl;
-    cin >> choice;
+    if (!(cin >> choice))
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a number." << endl;
+        return;
+    }
 
     cout << "Enter search value: ";
     cin >> searchValue;
@@ -162,9 +169,21 @@ void generatePurchaseReport()
     vector<Bill> filteredBills;
 
     cout << "Enter start year (YYYY): ";
-    cin >> startYear;
+    if (!(cin >> startYear))
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a year." << endl;
+        return;
+    }
     cout << "Enter end year (YYYY): ";
-    cin >> endYear;
+    if (!(cin >> endYear))
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a year." << endl;
+        return;
+    }
 
     // Convert the date string to an integer year for comparison
     auto getYear = [](const string &date)
