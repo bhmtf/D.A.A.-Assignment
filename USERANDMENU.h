@@ -144,7 +144,7 @@ public:
             cout << "6. Sort cars by price" << endl;
             cout << "7. Search for a car by its ID" << endl;
             cout << "8. Track the number of cars sold" << endl;
-            cout << "9. Purchase a car (remove from list and generate bill)" << endl;
+            cout << "9. Purchase a car" << endl;
             cout << "10. Sort cars by best-selling brand and search for the best-selling brand" << endl;
             cout << "11. Search for issued bills" << endl;
             cout << "12. Generate a report of all company purchases" << endl;
@@ -183,7 +183,7 @@ public:
                 break;
             case 10:
                 sortCarsByBestSellingBrand();
-                searchBestSellingCarByBrand();
+                searchBestSellingBrand();
                 break;
             case 11:
                 searchIssuedBills();

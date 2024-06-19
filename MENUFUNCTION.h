@@ -1,5 +1,5 @@
-#ifndef MENUFUNCTIONS_H_INCLUDED
-#define MENUFUNCTIONS_H_INCLUDED
+#ifndef MENUFUNCTION_H_INCLUDED
+#define MENUFUNCTION_H_INCLUDED
 
 #include <iostream>
 #include <iomanip>
@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <string>
 #include <functional>
+#include <cctype>
+#include <unordered_map>
 #include "BILLINGFUNCTIONS.h"
 
 using namespace std;
@@ -28,7 +30,8 @@ public:
 };
 
 vector<Car> cars;
-vector<Car> soldCars; // Separate vector for sold cars
+vector<Car> soldCars;      // Separate vector for sold cars
+vector<Car> purchasedCars; // Separate vector for purchased cars
 
 string generateCarID(const string &brand)
 {
@@ -37,26 +40,66 @@ string generateCarID(const string &brand)
     return brand.substr(0, 3) + to_string(random_number);
 }
 
+bool isAlpha(const string &str)
+{
+    return all_of(str.begin(), str.end(), ::isalpha);
+}
+
 void addCar()
 {
     string brand, color, country;
     int year;
     double price;
+    time_t now = time(0);
+    int currentYear = localtime(&now)->tm_year + 1900;
 
-    cout << "Enter car brand: ";
-    cin >> brand;
-    cout << "Enter car color: ";
-    cin >> color;
-    cout << "Enter country of manufacture: ";
-    cin >> country;
-    cout << "Enter year of manufacture: ";
-    cin >> year;
-    cout << "Enter price: ";
-    cin >> price;
+    try
+    {
+        cout << "Enter car brand: ";
+        cin >> brand;
+        if (!isAlpha(brand))
+        {
+            throw runtime_error("Brand should only contain alphabets.");
+        }
 
-    string id = generateCarID(brand);
-    cars.emplace_back(id, brand, color, country, year, price);
-    cout << "Car added with ID: " << id << endl;
+        cout << "Enter car color: ";
+        cin >> color;
+        if (!isAlpha(color))
+        {
+            throw runtime_error("Color should only contain alphabets.");
+        }
+
+        cout << "Enter country of manufacture: ";
+        cin >> country;
+        if (!isAlpha(country))
+        {
+            throw runtime_error("Country should only contain alphabets.");
+        }
+
+        cout << "Enter year of manufacture: ";
+        cin >> year;
+        if (cin.fail() || year < 1886 || year > currentYear)
+        { // 1886 is the year the first car was made
+            throw runtime_error("Invalid year. Please enter a valid year.");
+        }
+
+        cout << "Enter price: ";
+        cin >> price;
+        if (cin.fail() || price < 0)
+        {
+            throw runtime_error("Invalid price. Please enter a valid price.");
+        }
+
+        string id = generateCarID(brand);
+        cars.emplace_back(id, brand, color, country, year, price);
+        cout << "Car added with ID: " << id << endl;
+    }
+    catch (const exception &e)
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << e.what() << endl;
+    }
 }
 
 void modifyCar()
@@ -69,18 +112,54 @@ void modifyCar()
     {
         if (car.id == id)
         {
-            cout << "Enter new car brand: ";
-            cin >> car.brand;
-            cout << "Enter new car color: ";
-            cin >> car.color;
-            cout << "Enter new country of manufacture: ";
-            cin >> car.country;
-            cout << "Enter new year of manufacture: ";
-            cin >> car.year;
-            cout << "Enter new price: ";
-            cin >> car.price;
-            cout << "Car details updated." << endl;
-            return;
+            try
+            {
+                cout << "Enter new car brand: ";
+                cin >> car.brand;
+                if (!isAlpha(car.brand))
+                {
+                    throw runtime_error("Brand should only contain alphabets.");
+                }
+
+                cout << "Enter new car color: ";
+                cin >> car.color;
+                if (!isAlpha(car.color))
+                {
+                    throw runtime_error("Color should only contain alphabets.");
+                }
+
+                cout << "Enter new country of manufacture: ";
+                cin >> car.country;
+                if (!isAlpha(car.country))
+                {
+                    throw runtime_error("Country should only contain alphabets.");
+                }
+
+                cout << "Enter new year of manufacture: ";
+                cin >> car.year;
+                time_t now = time(0);
+                int currentYear = localtime(&now)->tm_year + 1900;
+                if (cin.fail() || car.year < 1886 || car.year > currentYear)
+                {
+                    throw runtime_error("Invalid year. Please enter a valid year.");
+                }
+
+                cout << "Enter new price: ";
+                cin >> car.price;
+                if (cin.fail() || car.price < 0)
+                {
+                    throw runtime_error("Invalid price. Please enter a valid price.");
+                }
+
+                cout << "Car details updated." << endl;
+                return;
+            }
+            catch (const exception &e)
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << e.what() << endl;
+            }
         }
     }
     cout << "Car with ID " << id << " not found." << endl;
@@ -106,7 +185,25 @@ void displayAllCars()
     }
 }
 
-
+void displayPurchasedCars()
+{
+    cout << left << setw(10) << "Car ID"
+         << left << setw(15) << "Car Brand"
+         << left << setw(6) << "Year"
+         << left << setw(10) << "Color"
+         << left << setw(10) << "Price"
+         << left << setw(10) << "Country" << endl;
+    cout << "-------------------------------------------------------------" << endl;
+    for (const auto &car : purchasedCars)
+    {
+        cout << left << setw(10) << car.id
+             << left << setw(15) << car.brand
+             << left << setw(6) << car.year
+             << left << setw(10) << car.color
+             << left << setw(10) << car.price
+             << left << setw(10) << car.country << endl;
+    }
+}
 
 int customPartition(vector<Car> &arr, int low, int high, function<bool(const Car &, const Car &)> comparator)
 {
@@ -136,6 +233,11 @@ void quickSort(vector<Car> &arr, int low, int high, function<bool(const Car &, c
 
 void sortCarsByID()
 {
+    if (cars.empty())
+    {
+        cout << "No cars available to sort." << endl;
+        return;
+    }
     quickSort(cars, 0, cars.size() - 1, [](const Car &a, const Car &b)
               { return a.id < b.id; });
     displayAllCars();
@@ -143,6 +245,11 @@ void sortCarsByID()
 
 void sortCarsByPrice()
 {
+    if (cars.empty())
+    {
+        cout << "No cars available to sort." << endl;
+        return;
+    }
     quickSort(cars, 0, cars.size() - 1, [](const Car &a, const Car &b)
               { return a.price < b.price; });
     displayAllCars();
@@ -150,6 +257,11 @@ void sortCarsByPrice()
 
 void sortCarsByBrand()
 {
+    if (cars.empty())
+    {
+        cout << "No cars available to sort." << endl;
+        return;
+    }
     quickSort(cars, 0, cars.size() - 1, [](const Car &a, const Car &b)
               { return a.brand < b.brand; });
     displayAllCars();
@@ -174,47 +286,58 @@ void selectionSort(vector<Car> &arr, function<bool(const Car &, const Car &)> co
 
 void sortCarsByBestSellingBrand()
 {
-    selectionSort(cars, [](const Car &a, const Car &b)
-                  { return a.brand < b.brand; });
-    displayAllCars();
-}
-
-int binarySearch(const vector<Car> &arr, const string &brand)
-{
-    int left = 0, right = arr.size() - 1;
-    while (left <= right)
+    if (purchasedCars.empty())
     {
-        int mid = left + (right - left) / 2;
-        if (arr[mid].brand == brand)
-            return mid;
-        if (arr[mid].brand < brand)
-            left = mid + 1;
-        else
-            right = mid - 1;
+        cout << "No cars have been purchased." << endl;
+        return;
     }
-    return -1;
+    selectionSort(purchasedCars, [](const Car &a, const Car &b)
+                  { return a.brand < b.brand; });
+    displayPurchasedCars();
 }
 
-void searchBestSellingCarByBrand()
+void searchBestSellingBrand()
 {
-    string brand;
-    cout << "Enter car brand to search: ";
-    cin >> brand;
-    int index = binarySearch(cars, brand);
-    if (index != -1)
+    if (purchasedCars.empty())
     {
-        cout << "Best-selling car found: " << endl;
-        cout << "ID: " << cars[index].id << ", Brand: " << cars[index].brand << ", Color: " << cars[index].color
-             << ", Country: " << cars[index].country << ", Year: " << cars[index].year << ", Price: " << cars[index].price << endl;
+        cout << "No cars have been purchased." << endl;
+        return;
+    }
+
+    unordered_map<string, int> brandCount;
+    for (const auto &car : purchasedCars)
+    {
+        brandCount[car.brand]++;
+    }
+
+    string bestSellingBrand;
+    int maxCount = 0;
+    for (const auto &pair : brandCount)
+    {
+        if (pair.second > maxCount)
+        {
+            bestSellingBrand = pair.first;
+            maxCount = pair.second;
+        }
+    }
+
+    if (maxCount > 0)
+    {
+        cout << "Best-selling brand: " << bestSellingBrand << " with " << maxCount << " sales." << endl;
     }
     else
     {
-        cout << "Best-selling car with brand " << brand << " not found." << endl;
+        cout << "No sales data available." << endl;
     }
 }
 
 void searchCarByID()
 {
+    if (cars.empty())
+    {
+        cout << "No cars available." << endl;
+        return;
+    }
     string id;
     cout << "Enter car ID to search: ";
     cin >> id;
@@ -233,6 +356,11 @@ void searchCarByID()
 
 void trackSales()
 {
+    if (soldCars.empty())
+    {
+        cout << "No cars have been sold." << endl;
+        return;
+    }
     int totalSales = 0;
     for (const auto &car : soldCars)
     {
@@ -243,6 +371,11 @@ void trackSales()
 
 void purchaseCar()
 {
+    if (cars.empty())
+    {
+        cout << "No cars available for purchase." << endl;
+        return;
+    }
     string id;
     cout << "Enter car ID to purchase: ";
     cin >> id;
@@ -277,8 +410,9 @@ void purchaseCar()
         cout << "Total Price: " << totalPrice << endl;
         cout << "Date: " << date << endl;
 
-        it->sold++;              // Increment the number of cars sold
-        soldCars.push_back(*it); // Add to sold cars vector
+        it->sold++;                   // Increment the number of cars sold
+        soldCars.push_back(*it);      // Add to sold cars vector
+        purchasedCars.push_back(*it); // Add to purchased cars vector
         cars.erase(it);
     }
     else
@@ -287,4 +421,4 @@ void purchaseCar()
     }
 }
 
-#endif // MENUFUNCTIONS_H_INCLUDED
+#endif // MENUFUNCTION_H_INCLUDED
